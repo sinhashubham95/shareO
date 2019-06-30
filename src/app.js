@@ -1,8 +1,12 @@
-import { createStackNavigator } from 'react-navigation';
-import Home from './home';
+import React, { Component } from 'react';
+import AppContainer from './navigator';
 
-export default createStackNavigator({
-  home: { screen: Home },
-}, {
-  initialRouteName: 'home',
-});
+export default class App extends Component {
+  render() {
+    return (
+      <AppContainer
+        uriPrefix="/app"
+      />
+    );
+  }
+}
