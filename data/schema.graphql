@@ -1,0 +1,34 @@
+type Dimension {
+  height: Int
+  id: ID!
+  width: Int
+}
+
+type Image {
+  dimension: Dimension
+  id: ID!
+  link: String
+  title: String
+  type: String
+}
+
+type Page {
+  count: Int
+  id: ID!
+  isLastPage: Boolean
+  nextStart: Int
+  start: Int
+}
+
+type PaginatedImageList {
+  data: [Image]
+  id: ID!
+  page: Page
+}
+
+type Query {
+  imageList(
+    start: Int = 1
+    type: String = "morning"
+  ): PaginatedImageList
+}
