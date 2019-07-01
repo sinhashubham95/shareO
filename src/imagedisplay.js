@@ -1,15 +1,20 @@
 import React, { Component } from 'react';
 import GQL from 'graphql-tag';
 import { Query } from 'react-apollo';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { Tile } from 'react-native-elements';
+import Spinner from 'react-native-spinkit';
+import Share from 'react-native-share';
 
 const styles = StyleSheet.create({
-  loadingContainer: {
-    flexDirection: 'row',
+  wrapper: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  spinner: {
+    marginBottom: 50
   },
 });
 
@@ -19,6 +24,7 @@ const GetImages = GQL`
       data {
         title
         link
+        type
       }
       page {
         isLastPage
@@ -32,6 +38,20 @@ class ImageDisplay extends Component {
   static navigationOptions = ({ navigation }) => ({
     headerTitle: `${navigation.state.params.name[0].toUpperCase()}${navigation.state.params.name.substr(1).toLowerCase()}`,
   });
+
+  getBackgroundColor = (name) => {
+    switch (name) {
+      case 'morning':
+        return '#FFAF00';
+      case 'afternoon':
+        return '#FDCEA6';
+      case 'evening':
+        return '#FD6051';
+      case 'night':
+        return '#2D5070';
+    }
+    return '#FFAF00';
+  }
 
   onEndReached = (fetchMore, isLastPage, nextStart) => () => {
     if (isLastPage) {
@@ -62,20 +82,36 @@ class ImageDisplay extends Component {
     });
   }
 
+  onItemPress = (item) => async () => {
+    try {
+      await Share.open({
+        url: item.link,
+        type: item.type,
+      });
+    } catch {
+
+    }
+  }
+
   keyExtractor = (item, index) => `image_${item.link}_${item.title}_${index}`;
 
   renderLoading = () => (
-    <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color="#03A9F4" />
-    </View>
+    <Spinner
+      style={styles.spinner}
+      isVisible
+      size={100}
+      type="Bounce"
+      color="#fff"
+    />
   );
 
   renderDataItem = ({ item }) => (
     <Tile
       imageSrc={{ uri: item.link }}
       title={item.title}
-      featured
       imageContainerStyle={styles.image}
+      featured
+      onPress={this.onItemPress(item)}
     />
   );
 
@@ -90,6 +126,8 @@ class ImageDisplay extends Component {
   );
 
   render() {
+    const backgroundColor =
+      this.getBackgroundColor(this.props.navigation.state.params.name);
     return (
       <Query
         query={GetImages}
@@ -99,16 +137,12 @@ class ImageDisplay extends Component {
         }}
         fetchPolicy="cache-first"
       >
-        {({ loading, error, data, fetchMore }) => {
-          if (loading) {
-            return this.renderLoading();
-          }
-          if (data) {
-            return this.renderData(data, fetchMore);
-          }
-          console.log(error);
-          return null;
-        }}
+        {({ loading, error, data, fetchMore }) => (
+          <View style={[styles.wrapper, { backgroundColor }]}>
+            {loading && this.renderLoading()}
+            {!loading && data && this.renderData(data, fetchMore)}
+          </View>
+        )}
       </Query>
     );
   }
