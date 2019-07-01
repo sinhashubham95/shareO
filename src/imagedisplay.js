@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import GQL from 'graphql-tag';
 import { Query } from 'react-apollo';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { Tile } from 'react-native-elements';
 import Spinner from 'react-native-spinkit';
@@ -107,9 +107,8 @@ class ImageDisplay extends Component {
 
   renderDataItem = ({ item }) => (
     <Tile
-      imageSrc={{ uri: item.link }}
+      imageSrc={{ uri: item.link, cache: "force-cache" }}
       title={item.title}
-      imageContainerStyle={styles.image}
       featured
       onPress={this.onItemPress(item)}
     />
@@ -122,6 +121,15 @@ class ImageDisplay extends Component {
       renderItem={this.renderDataItem}
       onEndReached={this.onEndReached(fetchMore,
         data.imageList.page.isLastPage, data.imageList.page.nextStart)}
+    />
+  );
+
+  renderError = () => (
+    <Tile
+      imageSrc={require('./assets/error.jpg')}
+      featured
+      activeOpacity={1}
+      height={Dimensions.get('screen').height}
     />
   );
 
@@ -141,6 +149,7 @@ class ImageDisplay extends Component {
           <View style={[styles.wrapper, { backgroundColor }]}>
             {loading && this.renderLoading()}
             {!loading && data && this.renderData(data, fetchMore)}
+            {!loading && !data && this.renderError()}
           </View>
         )}
       </Query>
