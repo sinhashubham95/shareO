@@ -21,7 +21,7 @@ const client = new ApolloClient({
       }
     }),
     new HttpLink({
-      uri: 'http://localhost/graphql',
+      uri: 'http://shareo-app-server.centralus.cloudapp.azure.com:8080/graphql',
       credentials: 'same-origin'
     }),
   ]),
