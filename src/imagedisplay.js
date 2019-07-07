@@ -108,7 +108,6 @@ class ImageDisplay extends Component {
   renderDataItem = ({ item }) => (
     <Tile
       imageSrc={{ uri: item.link, cache: "force-cache" }}
-      title={item.title}
       featured
       onPress={this.onItemPress(item)}
     />

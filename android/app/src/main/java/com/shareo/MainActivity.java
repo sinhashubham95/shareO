@@ -1,6 +1,9 @@
 package com.shareo;
 
 import com.facebook.react.ReactActivity;
+import android.os.Bundle;
+import android.widget.ImageView.ScaleType;
+import com.reactnativecomponent.splashscreen.RCTSplashScreen;
 
 public class MainActivity extends ReactActivity {
 
@@ -11,5 +14,11 @@ public class MainActivity extends ReactActivity {
     @Override
     protected String getMainComponentName() {
         return "shareO";
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        RCTSplashScreen.openSplashScreen(this, true, ScaleType.FIT_XY);
+        super.onCreate(savedInstanceState);
     }
 }

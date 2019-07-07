@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
 import { onError } from 'apollo-link-error';
 import { ApolloLink } from 'apollo-link';
 import { ApolloProvider } from 'react-apollo';
+import SplashScreen from 'react-native-smart-splash-screen';
 import AppContainer from './navigator';
 
 const client = new ApolloClient({
@@ -28,10 +29,22 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-export default () => (
-  <ApolloProvider client={client}>
-    <AppContainer
-      uriPrefix="/app"
-    />
-  </ApolloProvider>
-);
+export default class App extends Component {
+  componentDidMount() {
+    SplashScreen.close({
+      animationType: SplashScreen.animationType.scale,
+      duration: 850,
+      delay: 500,
+   });
+  }
+
+  render() {
+    return (
+      <ApolloProvider client={client}>
+        <AppContainer
+          uriPrefix="/app"
+        />
+      </ApolloProvider>
+    );
+  }
+}
